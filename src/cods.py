@@ -1,3 +1,4 @@
+print("ÖRNEK-1 Temel Port Tarayıcı (Socket ile)")
 #Ağ Güvenliği ve Protokol Analizi" konusu ile ilgili birkaç örnek verelim ilk başta basit ve anlaşılır kısımda python ile başlayacağım temel mantığı anlayabilmek içindir.
 import socket
 
