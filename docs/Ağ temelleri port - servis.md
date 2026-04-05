@@ -10,6 +10,8 @@
 3- Default Gateway	Yerel ağdaki cihazların dış dünyaya (internet) çıkmak için kullandığı "çıkış kapısı" olan cihazın (genelde modem) IP'sidir.    
        192.168.1.1
 
-#2. Sistemin Kapıları: Portlar ve Servisler
+
+# 2. Sistemin Kapıları: Portlar ve Servisler
+
 Bir IP adresine ulaştığında, o cihazın içinde hangi servisle konuşacağını portlar belirler. Bir evi IP adresi, evin içindeki kapıları da portlar gibi düşünebilirsin. 
 Sızma testinde amacımız "açık unutulmuş" veya "güvensiz" kapıları bulmaktır.
