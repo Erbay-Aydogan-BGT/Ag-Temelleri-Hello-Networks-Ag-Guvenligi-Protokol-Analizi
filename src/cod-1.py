@@ -3,13 +3,13 @@ print("ÖRNEK-1 Temel Port Tarayıcı (Socket ile)")
 import socket
 
 hedef_ip = "192.168.1.1"
-# Kendi modeminin veya sanal makinenin IP'sini yazabilirsin örnek amaçı böyle yazdım
+# Kendi modeminin veya sanal makinenin IP'si de yazılabilir örnek amaçı böyle yazdım
 aranacak_portlar = [21, 22, 80, 443] 
 
 print(f"{hedef_ip} üzerinde port taraması başlatılıyor...")
 
 for port in aranacak_portlar:
-# IPv4 (AF_INET) ve TCP (SOCK_STREAM) için bir soket oluşturmak istiyorum
+# IPv4 (AF_INET) ve TCP (SOCK_STREAM) için bir soket oluşturuyoruz
     soket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socket.setdefaulttimeout(1) # 1 saniye içinde cevap gelmezse geçsin atlasın 
     
