@@ -27,3 +27,17 @@ Port No	 -   Servis Adı      -   	Açıklama ve Örnek
 
 21	 -------      FTP	  ---------           Dosya aktarım protokolüdür. Eskiden çok yaygındı, şimdi yerini daha güvenli yöntemlere bıraktı.
 
+
+
+
+
+
+
+# links 
+Cisco Networking Academy: What is an IP Address?
+
+Cloudflare Learning: What is Subnetting?
+
+IANA Service Name and Transport Protocol Port Number Registry: Port Numbers Official List
+
+
