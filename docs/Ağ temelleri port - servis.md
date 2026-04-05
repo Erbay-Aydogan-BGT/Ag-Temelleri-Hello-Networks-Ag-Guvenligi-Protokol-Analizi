@@ -16,3 +16,9 @@
 Bir IP adresine ulaştığında, o cihazın içinde hangi servisle konuşacağını portlar belirler. 
 Bir evi IP adresi, evin içindeki kapıları da portlar gibi düşünebilirsin. 
 Sızma testinde amacımız "açık unutulmuş" veya "güvensiz" kapıları bulmaktır.
+
+Port No	  Servis Adı       	Açıklama ve Örnek
+22  	     SSH	             Uzaktan güvenli komut satırı erişimi sağlar. Genelde Linux sunucuları yönetmek için kullanılır.
+80	       HTTP	            Şifresiz web trafiğidir. Tarayıcıya http://... yazdığında bu kapıdan girersin.
+443	      HTTPS	           Şifreli ve güvenli web trafiğidir. Günümüzdeki çoğu web sitesi bu güvenli kapıyı kullanır.
+21	       FTP	             Dosya aktarım protokolüdür. Eskiden çok yaygındı, şimdi yerini daha güvenli yöntemlere bıraktı.
