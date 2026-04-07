@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sızma Testi: Kırmızı ve Mavi Takım Laboratuvarı</title>
+    <style>
+        body {
+            background-color: #0c0c0c;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 900px;
+            background: #111;
+            padding: 20px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-top: 0;
+            text-transform: uppercase;
+            font-size: 1.5em;
+        }
+        .mission-box {
+            background: #002200;
+            padding: 15px;
+            border-left: 4px solid #00ff00;
+            margin-bottom: 15px;
+            font-size: 1em;
+            line-height: 1.4;
+            color: #e0ffe0;
+        }
+        .terminal-window {
+            flex-grow: 1;
+            background: #000;
+            padding: 15px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            font-size: 0.95em;
+            line-height: 1.3;
+        }
+        .history {
+            margin-bottom: 10px;
+        }
+        .history .cmd { color: #00ff00; font-weight: bold; }
+        .history .out { color: #cccccc; white-space: pre-wrap; margin-top: 5px; margin-bottom: 15px; }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .prompt {
+            color: #00ff00;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1em;
+            width: 100%;
+            outline: none;
+        }
+        .system-msg { color: #ffaa00; font-weight: bold; margin-top: 10px; margin-bottom: 10px;}
+        .success-msg { color: #00ffff; font-weight: bold;}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>[ CTF LAB: Ağ Sızma ve Güvenlik ]</h1>
+        
+        <div class="mission-box" id="mission-text">
+            <strong>GÖREV 1: BİLGİ TOPLAMA (RECON)</strong><br>
+            Ağımızdaki hedef sistemin domain adı <code>hedef.sistem.local</code> olarak belirlendi. Ancak IP adresini bilmiyoruz. Hedefin IP adresini öğrenmek için terminale ICMP (ping) paketi gönderen komutu yazın. (Örn: <i>ping hedef.sistem.local</i>)
+        </div>
+
+        <div class="terminal-window" id="terminal" onclick="document.getElementById('user-input').focus()">
+            <div id="output-history"></div>
+            
+            <div class="input-group" id="input-area">
+                <span class="prompt">root@kali:~#</span>
+                <input type="text" id="user-input" autocomplete="off" autofocus>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const targetDomain = "hedef.sistem.local";
+        const targetIP = "192.168.1.45";
+
+        const stages = [
+            {
+                // STAGE 0: PING (IP Bulma)
+                mission: "<strong>GÖREV 2: PORT TARAMASI (SCANNING)</strong><br>Hedefin IP adresinin <code>192.168.1.45</code> olduğunu tespit ettik. Şimdi bu IP adresine yönelik detaylı bir port ve servis versiyonu taraması başlatın. (Örn: <i>nmap -sV 192.168.1.45</i>)",
+                check: (cmd) => cmd.includes("ping") && cmd.includes("hedef.sistem.local"),
+                output: `PING hedef.sistem.local (192.168.1.45) 56(84) bytes of data.\n64 bytes from 192.168.1.45: icmp_seq=1 ttl=64 time=0.421 ms\n64 bytes from 192.168.1.45: icmp_seq=2 ttl=64 time=0.380 ms\n--- hedef.sistem.local ping statistics ---\n2 packets transmitted, 2 received, 0% packet loss\n\n[SİSTEM]: Hedefin IP adresi (192.168.1.45) başarıyla tespit edildi!`
+            },
+            {
+                // STAGE 1: NMAP (Açık Bulma)
+                mission: "<strong>GÖREV 3: SÖMÜRÜ VE SIZMA (EXPLOITATION)</strong><br>Tarama sonucunda 21. portta zafiyetli bir <code>vsftpd</code> servisi çalıştığını gördük. Güvenlik yapılandırması hatalı. Bu FTP portuna terminalden doğrudan bağlanarak içeri sızın! (Örn: <i>ftp 192.168.1.45</i>)",
+                check: (cmd) => cmd.includes("nmap") && cmd.includes("192.168.1.45"),
+                output: `Starting Nmap 7.93 ( https://nmap.org ) at 2026-04-07 11:45 TRT\nNmap scan report for 192.168.1.45\nHost is up (0.00013s latency).\nNot shown: 998 closed tcp ports\nPORT   STATE SERVICE VERSION\n21/tcp open  ftp     vsftpd 2.3.4 (Anonymous Login Allowed!)\n22/tcp open  ssh     OpenSSH 8.2p1\n\n[SİSTEM]: Kritik zafiyet bulundu! Port 21 (FTP) anonim girişe açık bırakılmış.`
+            },
+            {
+                // STAGE 2: FTP (Bağlantı/Saldırı)
+                mission: "<strong>GÖREV 4: GÜVENLİĞİ SAĞLAMA (DEFENSE)</strong><br>Sızma işlemi başarılı! Sistemdeki kritik bir dosyayı okudunuz. Şimdi Mavi Takım şapkanızı takın. Bir güvenlik uzmanı olarak, bu zafiyetli servisin dışarıdan erişimini kesmek zorundasınız. UFW (Güvenlik Duvarı) aracını kullanarak 21. portu dışarıya kapatın. (Örn: <i>ufw deny 21</i>)",
+                check: (cmd) => (cmd.includes("ftp") || cmd.includes("nc")) && cmd.includes("192.168.1.45"),
+                output: `Connected to 192.168.1.45.\n220 (vsFTPd 2.3.4)\nName (192.168.1.45:root): anonymous\n331 Please specify the password.\nPassword: \n230 Login successful.\nRemote system type is UNIX.\nftp> get secret_passwords.txt\n200 PORT command successful.\n150 Opening BINARY mode data connection for secret_passwords.txt.\n226 Transfer complete.\n\n[SİSTEM]: SİSTEME SIZILDI VE KRİTİK VERİ ÇALINDI!`
+            },
+            {
+                // STAGE 3: UFW (Savunma/Kapatma)
+                mission: "<strong><span style='color:#00ffff'>SİMÜLASYON BAŞARIYLA TAMAMLANDI!</span></strong><br>Bir saldırganın bakış açısından bilgi topladınız, açığı buldunuz ve sızdınız. Ardından bir savunmacı (Blue Team) olarak bu açığı güvenlik duvarı ile yamadınız. Tebrikler!",
+                check: (cmd) => cmd.includes("ufw deny 21") || cmd.includes("iptables"),
+                output: `Rule added\nRule added (v6)\nStatus: active\nTo                         Action      From\n--                         ------      ----\n21/tcp                     DENY        Anywhere\n21/tcp (v6)                DENY        Anywhere (v6)\n\n[SİSTEM]: GÜVENLİK DUVARI GÜNCELLENDİ! PORT 21 DIŞ ERİŞİME KAPATILDI.`
+            }
+        ];
+
+        let currentStage = 0;
+        const inputField = document.getElementById('user-input');
+        const outputHistory = document.getElementById('output-history');
+        const missionText = document.getElementById('mission-text');
+        const terminalWindow = document.getElementById('terminal');
+
+        inputField.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const cmd = inputField.value.trim().toLowerCase();
+                if (cmd === "") return;
+
+                printCommand(inputField.value);
+                inputField.value = "";
+                inputField.disabled = true; // İşlem bitene kadar girişi kilitle
+
+                // İşlem yapılıyormuş hissi vermek için gecikme (Timeout)
+                setTimeout(() => {
+                    processCommand(cmd);
+                    inputField.disabled = false;
+                    inputField.focus();
+                }, 800);
+            }
+        });
+
+        function printCommand(cmd) {
+            const entry = document.createElement('div');
+            entry.className = 'history';
+            entry.innerHTML = `<span class="prompt">root@kali:~#</span><span class="cmd">${cmd}</span>`;
+            outputHistory.appendChild(entry);
+            terminalWindow.scrollTop = terminalWindow.scrollHeight;
+        }
+
+        function processCommand(cmd) {
+            if (currentStage < stages.length) {
+                const stage = stages[currentStage];
+                
+                if (stage.check(cmd)) {
+                    // Doğru komut girildi
+                    printOutput(stage.output, true);
+                    currentStage++;
+                    
+                    // Görevi güncelle
+                    setTimeout(() => {
+                        missionText.innerHTML = stages[currentStage - 1].mission;
+                        if(currentStage === stages.length) {
+                            document.getElementById('input-area').style.display = 'none';
+                        }
+                    }, 1000);
+                } else {
+                    // Yanlış komut girildi
+                    printOutput(`bash: ${cmd}: Geçersiz komut veya mevcut görev için uygun değil. Lütfen görev yönergelerini izleyin.`, false);
+                }
+            }
+        }
+
+        function printOutput(text, success) {
+            const entry = document.createElement('div');
+            entry.className = 'history';
+            
+            // Eğer sistem mesajı içeriyorsa renklendir
+            let formattedText = text.replace(/\[SİSTEM\]:/g, '<span class="system-msg">[SİSTEM]:</span>');
+            formattedText = formattedText.replace(/SİSTEME SIZILDI/g, '<span style="color:red; font-weight:bold;">SİSTEME SIZILDI</span>');
+            
+            entry.innerHTML = `<div class="out">${formattedText}</div>`;
+            outputHistory.appendChild(entry);
+            terminalWindow.scrollTop = terminalWindow.scrollHeight;
+        }
+    </script>
+</body>
+</html>
